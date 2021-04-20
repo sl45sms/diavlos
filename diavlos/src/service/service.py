@@ -10,8 +10,14 @@ from diavlos.src.bpmn import BPMN
 from diavlos.src.site import Site
 from diavlos.src.site import SiteError
 
+from blinker import Namespace
+
 logger = logging.getLogger(__name__)
 
+service_signals = Namespace()
+service_add = service_signals.signal('service-add')
+service_update = service_signals.signal('service-update')
+service_fetch = service_signals.signal('service-fetch')
 
 class ServiceError(Exception):
     """ServiceError exception"""
@@ -344,6 +350,7 @@ class Service:
                 page_full_name = page.name
                 result = self._service_dict(
                     page_name, page_full_name, TemplateEditor(page.text()))
+                service_update.send(self)
             else:
                 result = ErrorCode.NO_FIELD_UPDATED
         else:
@@ -378,6 +385,7 @@ class Service:
                 page_name = page.page_title
                 page_full_name = page.name
                 result = self._service_dict(page_name, page_full_name, te)
+                service_add.send(self)
             else:
                 result = ErrorCode.INVALID_TEMPLATE
         return result
