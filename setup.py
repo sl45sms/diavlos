@@ -9,6 +9,7 @@ setup(
         'mwclient==0.10.1',
         'zeep==4.0.0',
         'Flask_HTTPAuth==4.1.0',
+        'blinker==1.4',
         'lxml==4.5.0',
         'Flask==1.1.1',
         'pymongo==3.11.0',
