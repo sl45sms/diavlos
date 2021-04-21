@@ -1,0 +1,7 @@
+WEBHOOKS:
+  - URL: http://localhost/emd_events
+    username: user
+    password: password
+  - URL: http://127.0.0.1
+    username: user
+    password: password

@@ -9,6 +9,7 @@ from .error import ServiceErrorCode as ErrorCode
 from diavlos.src.bpmn import BPMN
 from diavlos.src.site import Site
 from diavlos.src.site import SiteError
+from diavlos.src.webhooks import WebHooks
 
 from blinker import Namespace
 
@@ -18,6 +19,13 @@ service_signals = Namespace()
 service_add = service_signals.signal('service-add')
 service_update = service_signals.signal('service-update')
 service_fetch = service_signals.signal('service-fetch')
+
+webHooks = WebHooks()
+
+@service_fetch.connect
+def fetch_data(who, **kw):
+    print("Caught signal from %r, data %r" % (who, kw))
+    webHooks.notify_webhooks()
 
 class ServiceError(Exception):
     """ServiceError exception"""
@@ -188,6 +196,7 @@ class Service:
                 'page_continue': continue_response,
                 'services': services_data
             }
+        service_fetch.send(self,res=result)
         return result
 
     def fetch_by_name(self, name, fetch_bpmn_digital_steps=None):
