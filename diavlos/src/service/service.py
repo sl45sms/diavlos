@@ -19,14 +19,15 @@ logger = logging.getLogger(__name__)
 service_signals = Namespace()
 service_add = service_signals.signal('service-add')
 service_update = service_signals.signal('service-update')
-service_fetch = service_signals.signal('service-fetch')
+service_fetch_all = service_signals.signal('service-fetch')
 
 webHooks = WebHooks()
 
-@service_fetch.connect
+@service_fetch_all.connect
 def fetch_data(who, **kw):
     print("Caught signal from %r, data %r" % (who, kw))
-    wh = threading.Thread(target=webHooks.notify_webhooks, args=())
+    msg=str("%r"%kw)
+    wh = threading.Thread(target=webHooks.notify_webhooks, args=({msg}))
     wh.start()
 
 class ServiceError(Exception):
@@ -198,7 +199,7 @@ class Service:
                 'page_continue': continue_response,
                 'services': services_data
             }
-        service_fetch.send(self,res=result)
+        service_fetch_all.send(self,res={"include_info":include_info,"page_continue":page_continue,"limit":limit})
         return result
 
     def fetch_by_name(self, name, fetch_bpmn_digital_steps=None):
