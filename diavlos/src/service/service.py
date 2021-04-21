@@ -2,6 +2,7 @@
 import logging
 import mwclient
 import re
+import threading
 
 from mwtemplates import TemplateEditor
 
@@ -25,7 +26,8 @@ webHooks = WebHooks()
 @service_fetch.connect
 def fetch_data(who, **kw):
     print("Caught signal from %r, data %r" % (who, kw))
-    webHooks.notify_webhooks()
+    wh = threading.Thread(target=webHooks.notify_webhooks, args=())
+    wh.start()
 
 class ServiceError(Exception):
     """ServiceError exception"""
