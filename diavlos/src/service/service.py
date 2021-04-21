@@ -397,7 +397,7 @@ class Service:
                 page_name = page.page_title
                 page_full_name = page.name
                 result = self._service_dict(page_name, page_full_name, te)
-                service_add.send(self.send(self,res={"method":"POST","page_name":page_name,"page_full_name":page_full_name})
+                service_add.send(self,res={"method":"POST","page_name":page_name,"page_full_name":page_full_name})
             else:
                 result = ErrorCode.INVALID_TEMPLATE
         return result
