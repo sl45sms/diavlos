@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 service_signals = Namespace()
 service_add = service_signals.signal('service-add')
 service_update = service_signals.signal('service-update')
-service_fetch_all = service_signals.signal('service-fetch')
+service_fetch_all = service_signals.signal('service-fetch') #TODO this can be skipped after testings to prevent overload
 
 webHooks = WebHooks()
 
@@ -199,7 +199,7 @@ class Service:
                 'page_continue': continue_response,
                 'services': services_data
             }
-        service_fetch_all.send(self,res={"include_info":include_info,"page_continue":page_continue,"limit":limit})
+        service_fetch_all.send(self,res={"method":"GET","action":"fetch_all","include_info":include_info,"page_continue":page_continue,"limit":limit})
         return result
 
     def fetch_by_name(self, name, fetch_bpmn_digital_steps=None):
@@ -362,7 +362,7 @@ class Service:
                 page_full_name = page.name
                 result = self._service_dict(
                     page_name, page_full_name, TemplateEditor(page.text()))
-                service_update.send(self)
+                service_update.send(self,res={"method":"PUT","page_name":page_name,"page_full_name":page_full_name})
             else:
                 result = ErrorCode.NO_FIELD_UPDATED
         else:
@@ -397,7 +397,7 @@ class Service:
                 page_name = page.page_title
                 page_full_name = page.name
                 result = self._service_dict(page_name, page_full_name, te)
-                service_add.send(self)
+                service_add.send(self.send(self,res={"method":"POST","page_name":page_name,"page_full_name":page_full_name})
             else:
                 result = ErrorCode.INVALID_TEMPLATE
         return result
