@@ -39,4 +39,4 @@ WORKDIR /diavlos/scripts/
 
 EXPOSE 5000
 
-CMD ["./serve_api.sh"]
+CMD ["./serve_api.sh","--generate-new-schemas"]
